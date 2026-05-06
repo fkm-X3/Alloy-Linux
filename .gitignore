@@ -1,0 +1,7 @@
+/build/
+/build/output/
+rootfs/
+*.pyc
+__pycache__/
+*.tar.gz
+*.iso

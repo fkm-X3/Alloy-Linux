@@ -1,0 +1,6 @@
+name: hello-world
+version: "0.1"
+arch: arm64
+description: "Example package that installs a tiny script"
+source: ""
+build_cmd: "./build.sh"
