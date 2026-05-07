@@ -1,0 +1,38 @@
+name: arm64-foundation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate shell scripts
+        run: |
+          set -euo pipefail
+          while IFS= read -r f; do
+            bash -n "$f"
+          done < <(find . -name '*.sh' -type f)
+
+      - name: Check metadata/reproducibility manifests
+        run: |
+          chmod +x ci/reproducible-check.sh
+          ./ci/reproducible-check.sh
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Rust tools
+        run: cargo build --manifest-path tools/Cargo.toml --workspace
+
+      - name: Test Rust tools
+        run: cargo test --manifest-path tools/Cargo.toml --workspace
+
+      - name: Run QEMU smoke hook
+        run: |
+          chmod +x ci/qemu-smoke.sh
+          ./ci/qemu-smoke.sh

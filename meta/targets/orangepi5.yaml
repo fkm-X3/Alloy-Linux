@@ -1,0 +1,18 @@
+name: "orange-pi-5"
+soc: "rk3588"
+arch: "arm64"
+bootloader: "u-boot"
+kernel_dtb:
+  - "rockchip/rk3588s-orangepi-5.dtb"
+rootfs_fs: "ext4"
+image_layout:
+  partition_table: "gpt"
+  partitions:
+    - name: "boot"
+      fs: "ext4"
+      size: "256M"
+      mountpoint: "/boot"
+    - name: "rootfs"
+      fs: "ext4"
+      size: "remaining"
+      mountpoint: "/"

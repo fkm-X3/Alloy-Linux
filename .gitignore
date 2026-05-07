@@ -5,3 +5,4 @@ rootfs/
 __pycache__/
 *.tar.gz
 *.iso
+tools/target/

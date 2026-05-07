@@ -1,0 +1,9 @@
+kernel_version: "6.12.31"
+kernel_tarball_url: "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${kernel_version}.tar.xz"
+kernel_sha256: ""
+
+rust_toolchain: "stable"
+target_triple: "aarch64-unknown-linux-gnu"
+
+cross_compile_prefix: "aarch64-linux-gnu-"
+arch: "arm64"

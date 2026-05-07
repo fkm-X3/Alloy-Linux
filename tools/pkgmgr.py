@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Simple package recipe lister for Alloy-Linux (prototype)."""
+"""Simple package recipe lister for Alloy-Linux (compatibility helper).
+
+Rust package tooling lives under tools/alloy-pkg.
+"""
 import os
 root = os.path.dirname(os.path.dirname(__file__))
 pkgs = os.path.join(root, 'packages')

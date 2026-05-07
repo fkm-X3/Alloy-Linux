@@ -1,0 +1,7 @@
+[workspace]
+members = [
+  "alloy-init",
+  "alloy-pkg",
+]
+
+resolver = "2"
