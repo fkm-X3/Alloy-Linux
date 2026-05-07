@@ -6,12 +6,14 @@ BOOT_DIR ?= $(OUTPUT_DIR)/boot
 IMAGE_PATH ?= $(OUTPUT_DIR)/alloy-orangepi5.img
 KERNEL_BUILD_DIR ?= $(OUTPUT_DIR)/kernel
 
-.PHONY: help setup build all rust-build rust-test kernel bootstrap rootfs image \
+.PHONY: help setup setup-wsl doctor build all rust-build rust-test kernel bootstrap rootfs image \
         repro-check qemu-smoke pkg-hello install-hello clean
 
 help:
 	@echo "Alloy-Linux common targets"
 	@echo "  make setup         Validate cross toolchain and emit env file"
+	@echo "  make setup-wsl     Validate WSL host prerequisites + emit toolchain env"
+	@echo "  make doctor        Diagnose host prerequisites for build/image workflow"
 	@echo "  make build         Bootstrap + build Rust workspace"
 	@echo "  make kernel        Build ARM64 kernel + boot artifacts"
 	@echo "  make rootfs        Create minimal rootfs layout"
@@ -22,6 +24,12 @@ help:
 
 setup:
 	bash scripts/toolchain/setup-toolchain.sh
+
+setup-wsl:
+	bash scripts/toolchain/setup-wsl-host.sh
+
+doctor:
+	bash scripts/toolchain/setup-wsl-host.sh --doctor
 
 build: bootstrap rust-build
 
