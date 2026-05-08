@@ -1,0 +1,14 @@
+[
+  {
+    "name": "pkg-hello",
+    "exit": 0
+  },
+  {
+    "name": "reproducible-check",
+    "exit": 0
+  },
+  {
+    "name": "qemu-smoke",
+    "exit": 0
+  }
+]

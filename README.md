@@ -33,7 +33,6 @@ Current project direction:
 
 Use the top-level `Makefile` for faster common workflows:
 - `make setup`
-- `make setup-wsl`
 - `make doctor`
 - `make build`
 - `make kernel`
@@ -43,8 +42,8 @@ Use the top-level `Makefile` for faster common workflows:
 
 ## Windows setup + flashing
 
-For Windows users, use WSL2 as the build host:
-- `docs/windows-setup.md` for host setup and build commands
+For Windows users, use the native PowerShell host setup:
+- `docs/windows-native-setup.md` for host setup and build commands
 - `docs/windows-flash-install.md` for media flashing and install guidance
 
 ## Notes

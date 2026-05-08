@@ -1,6 +1,6 @@
 # Windows flashing and install workflow
 
-This guide covers writing a built Alloy-Linux image from Windows and handling current installer limitations.
+This guide covers writing a built Alloy-Linux image from Windows and notes on the Linux installer path.
 
 ## Prerequisites
 
@@ -44,19 +44,17 @@ Use the full disk device (for example `/dev/sdX`), not a partition (`/dev/sdX1`)
 - Double-check the destination drive before starting.
 - Safely eject media when complete.
 
-## Current installer status and manual bridge steps
+## Installer path
 
-`installer/install.sh` is currently a scaffold and does not partition/format/install automatically.
+`installer/install.sh` now partitions a target disk, formats boot/root ext4 partitions, installs the rootfs, copies boot assets, and writes `fstab` plus `extlinux.conf`.
 
-After flashing:
+Usage:
 
-1. Mount the flashed root partition and verify `/boot/extlinux/extlinux.conf` exists.
-2. Verify kernel assets are present under `/boot` (`Image` and `dtbs/rockchip/...`).
-3. If boot assets are missing, copy them from `build/output/boot/` into the flashed media `/boot`.
-4. Ensure `extlinux.conf` points to:
-   - `LINUX /boot/Image`
-   - `FDTDIR /boot/dtbs/rockchip`
-   - root argument matching your boot media.
+```bash
+installer/install.sh /dev/sdX build/output/rootfs build/output/boot
+```
+
+The script expects a whole-disk device and the built rootfs/boot artifacts. It writes `root=UUID=...` into `extlinux.conf` so the installed system is not tied to a fixed device name.
 
 ## First boot checks (Orange Pi 5)
 

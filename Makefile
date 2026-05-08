@@ -1,4 +1,5 @@
 SHELL := bash
+POWERSHELL ?= pwsh
 
 OUTPUT_DIR ?= ./build/output
 ROOTFS_DIR ?= $(OUTPUT_DIR)/rootfs
@@ -6,13 +7,13 @@ BOOT_DIR ?= $(OUTPUT_DIR)/boot
 IMAGE_PATH ?= $(OUTPUT_DIR)/alloy-orangepi5.img
 KERNEL_BUILD_DIR ?= $(OUTPUT_DIR)/kernel
 
-.PHONY: help setup setup-wsl doctor build all rust-build rust-test kernel bootstrap rootfs image \
+.PHONY: help setup setup-host doctor build all rust-build rust-test kernel bootstrap rootfs image \
         repro-check qemu-smoke pkg-hello install-hello clean
 
 help:
 	@echo "Alloy-Linux common targets"
 	@echo "  make setup         Validate cross toolchain and emit env file"
-	@echo "  make setup-wsl     Validate WSL host prerequisites + emit toolchain env"
+	@echo "  make setup-host    Validate Windows host prerequisites + emit toolchain env"
 	@echo "  make doctor        Diagnose host prerequisites for build/image workflow"
 	@echo "  make build         Bootstrap + build Rust workspace"
 	@echo "  make kernel        Build ARM64 kernel + boot artifacts"
@@ -23,48 +24,49 @@ help:
 	@echo "  make clean         Remove generated build artifacts"
 
 setup:
-	bash scripts/toolchain/setup-toolchain.sh
+	$(POWERSHELL) -NoProfile -File scripts\toolchain\setup-toolchain.ps1
 
-setup-wsl:
-	bash scripts/toolchain/setup-wsl-host.sh
+setup-host:
+	$(POWERSHELL) -NoProfile -File scripts\toolchain\setup-host.ps1
 
 doctor:
-	bash scripts/toolchain/setup-wsl-host.sh --doctor
+	$(POWERSHELL) -NoProfile -File scripts\toolchain\setup-host.ps1 -Doctor
 
-build: bootstrap rust-build
+build:
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target build
 
-all: build
+all:
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target all
 
 rust-build:
-	cargo build --manifest-path tools/Cargo.toml --workspace
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target rust-build
 
 rust-test:
-	cargo test --manifest-path tools/Cargo.toml --workspace
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target rust-test
 
 kernel:
-	bash kernel/build.sh $(KERNEL_BUILD_DIR)
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target kernel
 
 bootstrap:
-	bash build/lfs-bootstrap.sh $(OUTPUT_DIR)
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target bootstrap
 
 rootfs:
-	bash build/mkrootfs.sh $(ROOTFS_DIR)
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target rootfs
 
 image:
-	bash build/image.sh $(ROOTFS_DIR) $(IMAGE_PATH) $(BOOT_DIR)
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target image
 
 repro-check:
-	bash ci/reproducible-check.sh
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target repro-check
 
 qemu-smoke:
-	bash ci/qemu-smoke.sh
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target qemu-smoke
 
 pkg-hello:
-	bash packages/hello-world/build.sh
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target pkg-hello
 
-install-hello: rootfs pkg-hello
-	bash build/install-package.sh $(ROOTFS_DIR) packages/hello-world/hello-world-0.1-arm64.tar.gz
+install-hello:
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target install-hello
 
 clean:
-	rm -rf build/output tools/target \
-		packages/hello-world/pkgroot packages/hello-world/hello-world-0.1-arm64.tar.gz
+	$(POWERSHELL) -NoProfile -File Build.ps1 -Target clean
